@@ -401,15 +401,18 @@ function setMsg(msg, type) {
 
 async function loadMemos() {
   if (!contract) return;
-  const memos = await contract.getAllCoffees();
-  memosList.innerHTML = "";
   
+  // Get the list from blockchain
+  const memos = await contract.getAllCoffees();
+  
+  memosList.innerHTML = "";
   if (memos.length === 0) {
     memosList.innerHTML = "<div>No coffees yet.</div>";
     return;
   }
 
-  // FIXED: Create a copy using [...memos] before reversing
+  // FIX: Use [...memos] to create a copy before reversing
+  // This prevents the "Read only property" error
   [...memos].reverse().forEach(m => {
     const el = document.createElement("div");
     el.className = "memo";
@@ -419,43 +422,38 @@ async function loadMemos() {
 }
 
 async function connectWallet() {
+  // 1. CHECK: If no wallet, redirect to download page
+  if (typeof window.ethereum === "undefined") {
+    const confirmInstall = confirm("No Ethereum wallet found. Would you like to install MetaMask?");
+    if (confirmInstall) {
+      window.open("https://metamask.io/download/", "_blank");
+    }
+    return;
+  }
+
+  // 2. If wallet exists, connect as usual
   try {
     provider = new ethers.BrowserProvider(window.ethereum);
     
-    // --- STEP 1: FORCE NETWORK SWITCH TO SEPOLIA ---
+    // Force Sepolia switch if needed
     const network = await provider.getNetwork();
     if (network.chainId !== 11155111n) {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_switchEthereumChain',
-          params: [{ chainId: '0xaa36a7' }], // Hex for 11155111 (Sepolia)
-        });
-        // Re-initialize provider after switch to ensure it catches the change
-        provider = new ethers.BrowserProvider(window.ethereum);
-      } catch (switchError) {
-        // This error code 4902 means the chain has not been added to MetaMask
-        if (switchError.code === 4902) {
-           alert("Please add Sepolia network to your MetaMask!");
-        } else {
-           alert("Please switch to Sepolia to use this app.");
-        }
-        return;
-      }
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: '0xaa36a7' }],
+      });
+      provider = new ethers.BrowserProvider(window.ethereum);
     }
-    // -----------------------------------------------
 
     await provider.send("eth_requestAccounts", []);
     signer = await provider.getSigner();
-    
-    // Create contract with the signer (so you can write data later)
     contract = new ethers.Contract(contractAddress, contractABI, signer);
 
     const addr = await signer.getAddress();
     walletStatus.textContent = `Wallet: ${addr.slice(0,6)}...${addr.slice(-4)}`;
+    connectBtn.textContent = "Connected";
 
-    // This is where it was crashing before. Now it will work!
     artistAddress = await contract.artist();
-    
     if (artistAddress.toLowerCase() === addr.toLowerCase()) {
       withdrawBtn.disabled = false;
     }
@@ -466,7 +464,7 @@ async function connectWallet() {
 
   } catch (err) {
     console.error(err);
-    setMsg("Connection failed", "error");
+    setMsg("Connection failed or rejected", "error");
   }
 }
 
@@ -504,6 +502,49 @@ async function withdraw() {
 connectBtn.onclick = connectWallet;
 buyBtn.onclick = buyCoffee;
 withdrawBtn.onclick = withdraw;
+
+window.onload = async () => {
+  // 1. CHECK: Does the user have a wallet?
+  if (typeof window.ethereum === "undefined") {
+    console.log("No wallet installed.");
+    
+    // Update the UI to tell them
+    walletStatus.textContent = "Wallet: Not Found";
+    connectBtn.textContent = "Install Wallet";
+    
+    // Optional: Add a red warning in the feedback area
+    setMsg("Please install MetaMask to use this app.", "error");
+    return; // STOP HERE! Do not try to load contract.
+  }
+
+  // 2. If wallet exists, proceed with normal setup
+  try {
+    provider = new ethers.BrowserProvider(window.ethereum);
+
+    // Check Network (Sepolia)
+    const network = await provider.getNetwork();
+    if (network.chainId !== 11155111n) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0xaa36a7' }],
+        });
+        provider = new ethers.BrowserProvider(window.ethereum);
+      } catch (err) {
+        console.error("User rejected switch");
+        return; 
+      }
+    }
+
+    // Load Data
+    contract = new ethers.Contract(contractAddress, contractABI, provider);
+    await loadMemos();
+
+  } catch (err) {
+    console.error("Initialization failed:", err);
+  }
+};
+
 </script>
 
 </body>
