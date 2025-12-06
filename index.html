@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Buy Me A Coffee – Bauhaus / Bhavishya Jain</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bau-red: #d62828;
+      --bau-yellow: #fcbf49;
+      --bau-blue: #0077b6;
+      --bau-black: #111111;
+      --bau-white: #f8f7f4;
+      --radius: 0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: var(--bau-white);
+      color: var(--bau-black);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+    .page {
+      display: grid;
+      grid-template-columns: 1.1fr 1.4fr;
+      max-width: 1100px;
+      width: 100%;
+      border-left: 8px solid var(--bau-black);
+      border-right: 8px solid var(--bau-black);
+    }
+
+    /* LEFT BAUHAUS PANEL */
+    .hero {
+      border-right: 4px solid var(--bau-black);
+      padding: 3rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .hero-header {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.8rem;
+      border-bottom: 2px solid var(--bau-black);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .hero-title {
+      font-size: 2.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+    .hero-subtitle {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+    }
+    .hero-artist {
+      margin-top: 0.8rem;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .hero-composition {
+      margin-top: 2rem;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      grid-template-rows: 120px 120px;
+      gap: 0.5rem;
+    }
+    .block {
+      border: 3px solid var(--bau-black);
+    }
+    .red { background: var(--bau-red); }
+    .yellow { background: var(--bau-yellow); }
+    .blue { background: var(--bau-blue); }
+    .outline { background: transparent; }
+    .circle {
+      border-radius: 50%;
+      border: 3px solid var(--bau-black);
+      background: var(--bau-white);
+    }
+
+    .hero-footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--bau-black);
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* RIGHT PANEL */
+    .panel {
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--bau-black);
+      padding-bottom: 0.7rem;
+    }
+    .status-pill {
+      border: 2px solid var(--bau-black);
+      padding: 0.3rem 0.7rem;
+      background: var(--bau-yellow);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+    button {
+      border: 2px solid var(--bau-black);
+      padding: 0.5rem 1rem;
+      text-transform: uppercase;
+      background: var(--bau-blue);
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button.alt { background: var(--bau-white); color: var(--bau-black); }
+    button.danger { background: var(--bau-red); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .form-card {
+      border: 3px solid var(--bau-black);
+      padding: 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      background: #fdfaf3;
+    }
+
+    input, textarea {
+      border: 2px solid var(--bau-black);
+      padding: 0.5rem;
+      width: 100%;
+      background: var(--bau-white);
+    }
+
+    .memos-list {
+      border: 2px solid var(--bau-black);
+      padding: 0.7rem;
+      background: white;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .memo {
+      border: 2px solid var(--bau-black);
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .success { color: var(--bau-blue); text-transform: uppercase; font-size: .8rem; }
+    .error { color: var(--bau-red); text-transform: uppercase; font-size: .8rem; }
+  </style>
+</head>
+
+<body>
+<div class="page">
+
+  <!-- LEFT PANEL -->
+  <section class="hero">
+    <div>
+      <div class="hero-header">Bauhaus / Web3 / Coffee</div>
+      <h1 class="hero-title">Buy Me<br>A Coffee</h1>
+      <p class="hero-subtitle">Minimal · Functional · Geometric</p>
+      <p class="hero-artist">Supporting: Bhavishya Jain</p>
+
+      <div class="hero-composition">
+        <div class="block red"></div>
+        <div class="block outline"></div>
+        <div class="block yellow"></div>
+        <div class="circle"></div>
+      </div>
+    </div>
+
+    <div class="hero-footer">
+      <span>Function Over Ornament</span>
+      <span>Sepolia Network</span>
+    </div>
+  </section>
+
+  <!-- RIGHT PANEL -->
+  <section class="panel">
+
+    <div class="top-bar">
+      <span class="status-pill" id="walletStatus">Wallet: Disconnected</span>
+      <button id="connectButton">Connect</button>
+    </div>
+
+    <div class="form-card">
+      <input id="nameInput" placeholder="Name (optional)">
+      <textarea id="messageInput" placeholder="Message"></textarea>
+      <input id="amountInput" type="number" step="0.001" value="0.001">
+      <button id="buyButton" disabled>Send Coffee</button>
+      <button id="withdrawButton" class="danger" disabled>Withdraw (Artist)</button>
+      <div id="feedback"></div>
+    </div>
+
+    <h3>Memos</h3>
+    <div class="memos-list" id="memosList">
+      <div>No coffees yet.</div>
+    </div>
+
+  </section>
+</div>
+
+<script>
+const contractAddress = "0x3b77f8206c75328d251c627D56CF3bEa63811237";
+
+const contractABI = [
+  { "inputs":[{"internalType":"address","name":"artistAddress","type":"address"},{"internalType":"string","name":"name","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},
+  {"inputs":[],"name":"artist","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"message","type":"string"}],
+   "name":"buyCoffee","outputs":[],"stateMutability":"payable","type":"function"},
+  {"inputs":[],"name":"withdrawCoffee","outputs":[],"stateMutability":"nonpayable","type":"function"},
+  {"inputs":[],"name":"getAllCoffees","outputs":[{"components":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"message","type":"string"}],
+   "internalType":"struct BuyMeACoffee.Coffeesbought[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"}
+];
+
+let provider, signer, contract, artistAddress;
+
+const connectBtn = document.getElementById("connectButton");
+const buyBtn = document.getElementById("buyButton");
+const withdrawBtn = document.getElementById("withdrawButton");
+const walletStatus = document.getElementById("walletStatus");
+const feedback = document.getElementById("feedback");
+const memosList = document.getElementById("memosList");
+
+function setMsg(msg, type) {
+  feedback.textContent = msg;
+  feedback.className = type;
+}
+
+async function loadMemos() {
+  if (!contract) return;
+  const memos = await contract.getAllCoffees();
+  memosList.innerHTML = "";
+  
+  if (memos.length === 0) {
+    memosList.innerHTML = "<div>No coffees yet.</div>";
+    return;
+  }
+
+  // FIXED: Create a copy using [...memos] before reversing
+  [...memos].reverse().forEach(m => {
+    const el = document.createElement("div");
+    el.className = "memo";
+    el.innerHTML = `<strong>${m.name}</strong><br>${m.message}`;
+    memosList.appendChild(el);
+  });
+}
+
+async function connectWallet() {
+  try {
+    provider = new ethers.BrowserProvider(window.ethereum);
+    
+    // --- STEP 1: FORCE NETWORK SWITCH TO SEPOLIA ---
+    const network = await provider.getNetwork();
+    if (network.chainId !== 11155111n) {
+      try {
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0xaa36a7' }], // Hex for 11155111 (Sepolia)
+        });
+        // Re-initialize provider after switch to ensure it catches the change
+        provider = new ethers.BrowserProvider(window.ethereum);
+      } catch (switchError) {
+        // This error code 4902 means the chain has not been added to MetaMask
+        if (switchError.code === 4902) {
+           alert("Please add Sepolia network to your MetaMask!");
+        } else {
+           alert("Please switch to Sepolia to use this app.");
+        }
+        return;
+      }
+    }
+    // -----------------------------------------------
+
+    await provider.send("eth_requestAccounts", []);
+    signer = await provider.getSigner();
+    
+    // Create contract with the signer (so you can write data later)
+    contract = new ethers.Contract(contractAddress, contractABI, signer);
+
+    const addr = await signer.getAddress();
+    walletStatus.textContent = `Wallet: ${addr.slice(0,6)}...${addr.slice(-4)}`;
+
+    // This is where it was crashing before. Now it will work!
+    artistAddress = await contract.artist();
+    
+    if (artistAddress.toLowerCase() === addr.toLowerCase()) {
+      withdrawBtn.disabled = false;
+    }
+
+    buyBtn.disabled = false;
+    await loadMemos();
+    setMsg("Connected", "success");
+
+  } catch (err) {
+    console.error(err);
+    setMsg("Connection failed", "error");
+  }
+}
+
+async function buyCoffee() {
+  try {
+    const name = document.getElementById("nameInput").value || "Anonymous";
+    const message = document.getElementById("messageInput").value;
+    const amount = document.getElementById("amountInput").value;
+
+    const tx = await contract.buyCoffee(name, message, {
+      value: ethers.parseEther(amount)
+    });
+
+    await tx.wait();
+    setMsg("Coffee sent!", "success");
+    await loadMemos();
+
+  } catch (err) {
+    console.error(err);
+    setMsg("Failed to send coffee", "error");
+  }
+}
+
+async function withdraw() {
+  try {
+    const tx = await contract.withdrawCoffee();
+    await tx.wait();
+    setMsg("Withdrawn!", "success");
+  } catch (err) {
+    console.error(err);
+    setMsg("Withdraw failed", "error");
+  }
+}
+
+connectBtn.onclick = connectWallet;
+buyBtn.onclick = buyCoffee;
+withdrawBtn.onclick = withdraw;
+</script>
+
+</body>
+</html>
