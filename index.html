@@ -454,12 +454,35 @@
   // --- LOGIC ---
 
   async function init() {
+    // CHECK: Does the user have a wallet?
     if (typeof window.ethereum !== 'undefined') {
+        
+        // 1. Set the button to "Connect" mode
+        els.connectBtn.onclick = connectWallet; 
+
+        // 2. Check if already connected
         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-        if (accounts.length > 0) connectWallet();
-        else els.creatorsList.innerHTML = '<div style="padding:20px; text-align:center; font-size:0.8rem;">Connect wallet to load directory.</div>';
+        if (accounts.length > 0) {
+            connectWallet();
+        } else {
+            els.creatorsList.innerHTML = '<div style="padding:20px; text-align:center; font-size:0.8rem;">Connect wallet to load directory.</div>';
+        }
+
     } else {
+        // CASE: No Wallet found
         els.creatorsList.innerHTML = '<div style="padding:20px; text-align:center;">MetaMask Required</div>';
+        
+        // 1. Change Button Text
+        els.connectBtn.innerText = "DOWNLOAD METAMASK";
+        
+        // 2. Change Button Color (MetaMask Orange)
+        els.connectBtn.style.background = "#f6851b"; 
+        els.connectBtn.style.color = "white";
+
+        // 3. Change Click Action to open Download page
+        els.connectBtn.onclick = () => {
+            window.open("https://metamask.io/download/", "_blank");
+        };
     }
   }
 
