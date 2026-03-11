@@ -472,6 +472,33 @@
         provider = new ethers.BrowserProvider(window.ethereum);
         await provider.send("eth_requestAccounts", []);
         signer = await provider.getSigner();
+
+        const network = await provider.getNetwork();
+        if (network.chainId !== 11155111n) {
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0xaa36a7' }],
+                });
+            } catch (switchError) {
+                if (switchError.code === 4902) {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [{
+                            chainId: '0xaa36a7',
+                            chainName: 'Sepolia test network',
+                            nativeCurrency: { name: 'SepoliaETH', symbol: 'SEP', decimals: 18 },
+                            rpcUrls: ['https://rpc2.sepolia.org'],
+                            blockExplorerUrls: ['https://sepolia.etherscan.io']
+                        }]
+                    });
+                } else {
+                    throw switchError;
+                }
+            }
+            provider = new ethers.BrowserProvider(window.ethereum);
+            signer = await provider.getSigner();
+        }
         
         const addr = await signer.getAddress();
         els.connectBtn.innerText = addr.slice(0,6) + "..." + addr.slice(-4);
